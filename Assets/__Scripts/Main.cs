@@ -25,6 +25,8 @@ public class Main : MonoBehaviour
     public GameObject prefabPlayer2; 
     private BoundsCheck bndCheck;
     public int Heroesleft = 1; 
+    public int wavecount = 1; 
+    public int enemiesleft = 5; 
 
     void Awake()
     {
@@ -45,6 +47,22 @@ public class Main : MonoBehaviour
 
     }
 
+     void Update(){
+        
+        if (Input.GetKey(KeyCode.Return) && playerTwo == false){
+            playerTwo = true; 
+            Heroesleft++;
+            Instantiate<GameObject>(prefabPlayer2);
+        }
+        if (enemiesleft == 0){
+            wavecount++; 
+            enemiesleft = 5; 
+        }
+    }
+    
+
+
+
     public void SpawnEnemy()
     {
         // If spawnEnemies is false, skip to the next invoke of SpawnEnemy()
@@ -54,8 +72,11 @@ public class Main : MonoBehaviour
             return;
         }
 
+         int upperlimit = wavecount+1; 
+
+
         // Pick a random Enemy prefab to instantiate
-        int ndx = Random.Range(0, prefabEnemies.Length);                     // b
+        int ndx = Random.Range(0, upperlimit);                     // b
         GameObject go = Instantiate<GameObject>(prefabEnemies[ndx]);     // c
 
         // Position the Enemy above the screen with a random x position
@@ -76,6 +97,7 @@ public class Main : MonoBehaviour
         Invoke(nameof(SpawnEnemy), 1f / enemySpawnPerSecond);                // g
     }
 
+
     void DelayedRestart()
     {                                                   // c
                                                         // Invoke the Restart() method in gameRestartDelay seconds
@@ -89,13 +111,7 @@ public class Main : MonoBehaviour
         SceneManager.LoadScene("__Scene_0");                               // d
     }
 
-    void Update(){
-        if (Input.GetKey(KeyCode.Return) && playerTwo == false){
-            playerTwo = true; 
-            Heroesleft++;
-            Instantiate<GameObject>(prefabPlayer2);
-    }
-    }
+   
     static public void HERO_DIED()
     {
         S.DelayedRestart();                                                  // b
@@ -127,6 +143,7 @@ public class Main : MonoBehaviour
     /// <param name="e"The Enemy that was destroyed</param
     static public void SHIP_DESTROYED(Enemy e)
     {
+        S.enemiesleft--; 
         // Potentially generate a PowerUp
         if (Random.value <= e.powerUpDropChance)
         { // Underlined red for now  // c

@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     public float health = 10;    // Damage needed to destroy this enemy
     public int score = 100;   // Points earned for destroying this
     public float powerUpDropChance = 1f;
+    public GameObject mainCam; 
 
 
     // private BoundsCheck bndCheck;                                             // b
@@ -22,6 +23,7 @@ public class Enemy : MonoBehaviour
     void Awake()
     {                                                            // c
         bndCheck = GetComponent<BoundsCheck>();
+          mainCam = GameObject.Find("Main Camera");
     }
 
     // This is a Property: A method that acts like a field
@@ -39,6 +41,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+         Main maincontroller = mainCam.GetComponent<Main>();
         Move();
 
         // Check whether this Enemy has gone off the bottom of the screen
@@ -47,6 +50,10 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
 
 
+        }
+
+        if (maincontroller.enemiesleft == 0){
+            Destroy(this.gameObject);
         }
     }
 
@@ -60,6 +67,7 @@ public class Enemy : MonoBehaviour
     void OnCollisionEnter(Collision coll)
     {
         GameObject otherGO = coll.gameObject;
+       
 
         // Check for collisions with ProjectileHero
         ProjectileHero p = otherGO.GetComponent<ProjectileHero>();
@@ -79,6 +87,8 @@ public class Enemy : MonoBehaviour
                     }
                     // Destroy this Enemy
                     Destroy(this.gameObject);
+          
+
                 }
             }
             // Destroy the ProjectileHero regardless
